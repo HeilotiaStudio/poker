@@ -1,11 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Replace this check if the library exposes a different global
-  if (!window.PokerEvaluator) { 
-    alert('PokerEvaluator not loaded!');
-    return;
-  }
+  const Hand = window.PokerSolver.Hand;
 
-  const deckRanks = ['2','3','4','5','6','6','7','8','9','T','J','Q','K','A'];
+  const deckRanks = ['2','3','4','5','6','7','8','9','T','J','Q','K','A'];
   const deckSuits = ['h','d','c','s'];
 
   function generateDeck() {
@@ -34,17 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const deck = removeCards(generateDeck(), [...playerCards, ...communityCards]);
     const combos = generateTurnRiverCombos(deck);
 
-    // ⚡ Adjust for the new library: use .rank or .handValue
-    const playerHandScore = PokerEvaluator.evalHand([...playerCards, ...communityCards]).handValue;
-
+    const playerHand = Hand.solve([...playerCards, ...communityCards]);
     let wins = 0, ties = 0, losses = 0;
 
     for (const combo of combos) {
       const fullHand = [...playerCards, ...communityCards, ...combo];
-      const score = PokerEvaluator.evalHand(fullHand).handValue;
+      const oppHand = Hand.solve(fullHand);
 
-      if (score > playerHandScore) wins++;
-      else if (score === playerHandScore) ties++;
+      const comparison = Hand.winners([playerHand, oppHand]);
+      if (comparison.length === 2) ties++;
+      else if (comparison[0] === playerHand) wins++;
       else losses++;
     }
 
@@ -79,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 50);
   });
 });
+
+
 
 
 
