@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poker Odds Calculator</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/poker-evaluator@1.3.1/dist/poker-evaluator.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>♠️ Poker Odds Calculator</h1>
+
+    <div class="input-section">
+      <label>Your Hand:</label>
+      <input type="text" id="hole" placeholder="e.g., Ah Kh" />
+
+      <label>Flop Cards (optional):</label>
+      <input type="text" id="flop" placeholder="e.g., Qh Js 2d" />
+
+      <label>Number of Opponents:</label>
+      <select id="opponents">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+      </select>
+
+      <button id="calcBtn">Calculate Odds</button>
+    </div>
+
+    <div id="output">
+      <h3>Results:</h3>
+      <p id="resultText">Enter your cards to begin.</p>
+    </div>
+  </div>
+</body>
+</html>
