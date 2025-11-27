@@ -1,5 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const Hand = window.PokerSolver.Hand;
+  // Correct way to get Hand in browser
+  const Hand = window.PokerSolver ? window.PokerSolver.Hand : null;
+  if (!Hand) {
+    alert('PokerSolver library not loaded!');
+    return;
+  }
 
   const deckRanks = ['2','3','4','5','6','7','8','9','T','J','Q','K','A'];
   const deckSuits = ['h','d','c','s'];
@@ -37,9 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const fullHand = [...playerCards, ...communityCards, ...combo];
       const oppHand = Hand.solve(fullHand);
 
-      const comparison = Hand.winners([playerHand, oppHand]);
-      if (comparison.length === 2) ties++;
-      else if (comparison[0] === playerHand) wins++;
+      const winners = Hand.winners([playerHand, oppHand]);
+      if (winners.length === 2) ties++;
+      else if (winners[0] === playerHand) wins++;
       else losses++;
     }
 
@@ -74,6 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 50);
   });
 });
+
+
 
 
 
