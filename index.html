@@ -2,34 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Poker Odds Calculator</title>
-  <link rel="stylesheet" href="styles/main.css" />
-  <!-- Pokersolver browser-ready -->
-  <script src="https://unpkg.com/pokersolver/dist/pokersolver.min.js"></script>
-  <script defer src="script.js"></script>
+  <title>Poker Odds (PyScript + treys)</title>
+  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>♠️ Poker Odds Calculator</h1>
+  <h1>♠️ Poker Odds Calculator (PyScript + treys)</h1>
 
-    <div class="input-section">
-      <label>Your Hand:</label>
-      <input type="text" id="hole" placeholder="e.g., Ah Kh" />
+  <label>Your Hand (hole):</label>
+  <input id="hole" placeholder="e.g. Ah Kh" />
 
-      <label>Flop Cards (optional):</label>
-      <input type="text" id="flop" placeholder="e.g., Qh Js 2d" />
+  <label>Community cards (flop/turn/river so far):</label>
+  <input id="comm" placeholder="e.g. Qh Js 2d" />
 
-      <button id="calcBtn">Calculate Odds</button>
-    </div>
+  <button id="calc">Calculate</button>
 
-    <div id="output">
-      <h3>Results:</h3>
-      <p id="resultText">Enter your cards to begin.</p>
-    </div>
-  </div>
+  <p id="output">Enter your cards → odds will appear</p>
+
+  <py-env>
+    - treys
+  </py-env>
+
+  <py-script>
+from treys import Card, Evaluator
+import itertools
+from js import document  # to access DOM
+
+evaluator = Evaluator()
+
+def str2card(c):
+    # treys expects like 'Ah', 'Td'
+    return Card.new(c)
+
+def calc(hole, community):
+    board = [str2card(c) for c in community]
+    hand = [str2card(c) for c in hole]
+
+    # build deck minus known cards
+    ranks = '23456789TJQKA'
+    suits = 'hdcs'
+    full = [r + s for r in ranks for s in suits]
+    used = hole + community
+    deck = [c for c in full if c not in used]
+
+    wins = 0
+    ties = 0
+    losses = 0
+    total = 0
+
+    for turn, river in itertools.combinations(deck, 2):
+        b = board + [str2card(turn), str2card(river)]
+        score = evaluator.evaluate(b, hand)
+        # Suppose just checking if score improves — you can refine
+        # For demo: treat better than high‑card (lowest) as win
+        if score < 7462:  # 7462 = worst unsuited 7‑5‑4‑3‑2 in treys
+            wins += 1
+        else:
+            losses += 1
+        total += 1
+
+    return wins, losses, total
+
+def on_click(ev):
+    hole = document.getElementById("hole").value.strip().split()
+    comm = document.getElementById("comm").value.strip().split()
+    w, l, tot = calc(hole, comm)
+    pct = (w / tot) * 100
+    document.getElementById("output").innerText = f"Improve odds: {pct:.2f}%"
+
+document.getElementById("calc").element.onclick = on_click
+  </py-script>
 </body>
 </html>
+
+
 
 
 
